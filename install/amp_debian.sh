@@ -33,6 +33,27 @@ update() {
 	sudo apt -qq update 
 }
 
+disablePasswordSSH() {
+	# Disable Password Authentication Over SSH
+	echo -e "\n ${Cyan} Disable Password Authentication Over SSH.. ${Color_Off}"
+	sed -i "/PasswordAuthentication yes/d" /etc/ssh/sshd_config
+	echo "" | sudo tee -a /etc/ssh/sshd_config
+	echo "" | sudo tee -a /etc/ssh/sshd_config
+	echo "PasswordAuthentication no" | sudo tee -a /etc/ssh/sshd_config
+
+	# Restart SSH
+
+	ssh-keygen -A
+	service ssh restart
+}
+
+setTimeZone() {
+	# Set The Timezone
+
+	echo -e "\n ${Cyan} Setting Timezone.. ${Color_Off}"
+	ln -sf /usr/share/zoneinfo/Asia/Bangkok /etc/localtime
+}
+
 installApache() {
 	# Apache
 	echo -e "\n ${Cyan} Installing Apache.. ${Color_Off}"
@@ -79,6 +100,17 @@ installMySQL() {
 	
 	# DEBIAN_FRONTEND=noninteractive # by setting this to non-interactive, no questions will be asked
 	DEBIAN_FRONTEND=noninteractive sudo apt -qy install mysql-server mysql-client
+}
+
+configMysql() {
+	echo -e "\n ${Cyan} Configing MySQL.. ${Color_Off}"
+	echo "" >> /etc/mysql/my.cnf
+	echo "[mysqld]" >> /etc/mysql/my.cnf
+	echo "sql_mode=\"IGNORE_SPACE,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION\"" >> /etc/mysql/my.cnf
+	echo "character-set-server = utf8" >> /etc/mysql/my.cnf
+	echo "default-time-zone='+07:00'" >> /etc/mysql/my.cnf
+
+	service mysql restart
 }
 
 secureMySQL() {
@@ -135,17 +167,21 @@ restartApache() {
 
 # RUN
 update
+disablePasswordSSH
+setTimeZone
 installApache
 installLetsEncryptCertbot
 installPHP
 installMySQL
 secureMySQL
+configMysql
 installPHPMyAdmin
 enableMods
 setPermissions
 restartApache
 
 echo -e "\n${Green} SUCCESS! MySQL password is: ${PASS_MYSQL_ROOT} ${Color_Off}"
+echo ${PASS_MYSQL_ROOT} > /root/.mysql_root_pass
 
 # TODO
 # - [x] Figure out why it is asking for MySQL password and not just taking it from the variable in heredoc (cz: to avoid redirection, programs don't let heredoc enter passwords)
