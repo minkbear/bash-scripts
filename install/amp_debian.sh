@@ -139,6 +139,9 @@ installPHPMyAdmin() {
 	sudo debconf-set-selections <<< "phpmyadmin phpmyadmin/mysql/admin-pass password ${PASS_MYSQL_ROOT}" # MySQL Root Password
 	sudo debconf-set-selections <<< "phpmyadmin phpmyadmin/internal/skip-preseed boolean true"
 
+	# Ubuntu 19.10
+	sudo add-apt-repository ppa:phpmyadmin/ppa
+
 	DEBIAN_FRONTEND=noninteractive sudo apt -qy install phpmyadmin
 }
 
