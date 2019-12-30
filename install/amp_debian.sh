@@ -128,6 +128,17 @@ EOFMYSQLSECURE
 # NOTE: Skipped validate_password because it'll cause issues with the generated password in this script
 }
 
+createAdminAccountForMysql() {
+	# secure MySQL install
+	echo -e "\n ${Cyan} Creating Admin MySQL.. ${Color_Off}"
+	
+	mysql --user=root --password=${PASS_MYSQL_ROOT} << EOFMYSQLSECURE
+CREATE USER 'admin'@'localhost' IDENTIFIED WITH mysql_native_password BY '${PASS_MYSQL_ROOT}';
+GRANT ALL PRIVILEGES ON * . * TO 'admin'@'localhost';
+FLUSH PRIVILEGES;
+EOFMYSQLSECURE
+}
+
 installPHPMyAdmin() {
 	# PHPMyAdmin
 	echo -e "\n ${Cyan} Installing PHPMyAdmin.. ${Color_Off}"
@@ -179,6 +190,7 @@ installPHP
 installMySQL
 secureMySQL
 configMysql
+createAdminAccountForMysql
 installPHPMyAdmin
 enableMods
 setPermissions
