@@ -106,6 +106,7 @@ configMysql() {
 	echo -e "\n ${Cyan} Configing MySQL.. ${Color_Off}"
 	echo "" >> /etc/mysql/my.cnf
 	echo "[mysqld]" >> /etc/mysql/my.cnf
+	echo "default-authentication-plugin=mysql_native_password" >> /etc/mysql/my.cnf
 	echo "sql_mode=\"IGNORE_SPACE,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION\"" >> /etc/mysql/my.cnf
 	echo "character-set-server = utf8" >> /etc/mysql/my.cnf
 	echo "default-time-zone='+07:00'" >> /etc/mysql/my.cnf
